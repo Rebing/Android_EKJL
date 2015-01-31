@@ -131,11 +131,11 @@ public class MainActivity extends ListActivity {
 	
 	//Function for splitting an URL line and getting only name, date or download information
 	public static String splitter(String str, String sign) {
-		if(sign == ">") {
+		if(sign.equals(">")) {
 			String[] first = str.split(">");
 			String[] second = first[1].split("<");
 			return second[0];
-		} else if(sign == "/") {
+		} else if(sign.equals("/")) {
 			String[] split = str.split(sign);
 			return split[split.length - 1];
 		} else {
