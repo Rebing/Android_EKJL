@@ -2,8 +2,14 @@
 <resources>
 
     <string name="app_name">EKJL Calendar</string>
+    <string name="comps">Competitions</string>
+
     <string name="action_settings">Settings</string>
+    <string name="refresh">Refresh</string>
+
     <string name="download_desc">Download image</string>
     <string name="devMikk">Developed by Mikk Mihkel Nurges</string>
+
+    <string name="chooseNr">Choose how many events to display</string>
 
 </resources>

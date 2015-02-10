@@ -2,27 +2,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
+
+    <TextView
+        android:id="@+id/comps"
+        android:text="@string/comps"
+        android:background="#948E8E"
+        android:gravity="center_horizontal"
+        android:textSize="16sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </TextView>
     
     <ListView
  		android:id="@android:id/list"
+        android:layout_below="@id/comps"
 		android:layout_width="match_parent"
  		android:layout_height="wrap_content">
-	</ListView> 
-	
-    <TextView 
-        android:id="@+id/developed"
-        android:text="@+string/devMikk"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="10sp"
-        android:paddingTop="10dp"
-        android:paddingBottom="5dp"
-        android:layout_centerHorizontal="true" 
-        android:layout_below="@android:id/list" />
+	</ListView>
 
 </RelativeLayout>

@@ -24,7 +24,7 @@
         android:paddingRight="6dp"
         android:paddingBottom="2dp"
         android:contentDescription="@string/download_desc"
-        android:onClick="OnClick" >
+        android:onClick="ImageOnClick" >
     </ImageView>
 
     <TextView
