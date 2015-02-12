@@ -6,10 +6,15 @@
 
     <string name="action_settings">Settings</string>
     <string name="refresh">Refresh</string>
+    <string name="about">About</string>
 
     <string name="download_desc">Download image</string>
     <string name="devMikk">Developed by Mikk Mihkel Nurges</string>
 
     <string name="chooseNr">Choose how many events to display</string>
+
+    <string name="aboutTitle">About EKJL Calendar</string>
+    <string name="aboutMessage">Click on the green arrow for the required competition to show the timetable in PDF format.
+    Use settings to adjust the number of competitions displayed. The app also works offline.\n\nDeveloped by Mikk Mihkel Nurges</string>
 
 </resources>

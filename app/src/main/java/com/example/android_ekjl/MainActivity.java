@@ -2,9 +2,11 @@
 
 package com.example.android_ekjl;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -32,14 +34,17 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends ListActivity {
-	private int cal_size = 20; //How many events to display by default
+	static private int cal_size = 20; //How many events to display by default
+    private int current_size = 0;
     public String[] downloads;
     public String[] names;
     public String[] dates;
 
 	static String subfolder = "/EKJL_PDFs/";
     static String calendarURL = "http://ekjl.ee/kalender/nimekiri/lk/";
-    static String DataName = "URL_Data.txt";
+    static String resultURL = "http://ekjl.ee/statistika/tulemused";
+    static String CompData = "CompURL_Data.txt";
+    static String ResultData = "ResultURL_Data.txt";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +58,14 @@ public class MainActivity extends ListActivity {
     protected void onStart() {
         super.onStart();
 
-        createList();
+        //Gets the key for how many events to display
+        SharedPreferences calendarPref = getSharedPreferences("Calendar", 0);
+        cal_size = calendarPref.getInt("cal_size", 20);
+
+        if(cal_size != current_size) {
+            current_size = cal_size;
+            createList();
+        }
     }
 
     //Create the calendar list
@@ -66,20 +78,8 @@ public class MainActivity extends ListActivity {
 
         Map<Integer, String[]> comps = new HashMap<Integer, String[]>();
 
-        //Gets the key for how many events to display
-        SharedPreferences calendarPref = getSharedPreferences("Calendar", 0);
-        if(calendarPref.contains("cal_size")) {
-            cal_size = calendarPref.getInt("cal_size", 20);
-        }
-        else {
-            //Set default value, if nothing has been set
-            Editor calEditor = calendarPref.edit();
-            calEditor.putInt("cal_size", 20); //Default is 20 events
-            calEditor.commit();
-        }
-
         try {
-            String[] stringURL = {calendarURL, DataName, Integer.toString(cal_size)};
+            String[] stringURL = {calendarURL, CompData, Integer.toString(cal_size)};
             //Checks connection
             ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -122,7 +122,7 @@ public class MainActivity extends ListActivity {
     }
 	
 	//Scans through the HTML data and finds the required lines for name, date and download
-	private static Map<Integer, String[]> Competitions() throws MalformedURLException, IOException {
+	private static Map<Integer, String[]> Competitions() throws IOException {
         
         Map<Integer, String[]> comps = new HashMap<Integer, String[]>();
         int counter = 0;
@@ -134,7 +134,7 @@ public class MainActivity extends ListActivity {
         String download = null; //Is null if the competition has no PDF for download
 
         //Reads URL data from file
-        FileInputStream fis = new FileInputStream(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + DataName);
+        FileInputStream fis = new FileInputStream(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + CompData);
         BufferedReader in = new BufferedReader(new InputStreamReader(fis));
 
         String inputLine;
@@ -249,10 +249,23 @@ public class MainActivity extends ListActivity {
                 createList();
                 Toast.makeText(this, "List refreshed", Toast.LENGTH_LONG).show();
                 return true;
+            //"Settings"
             case R.id.action_settings:
                 Intent intent = new Intent(this, Settings.class);
                 startActivity(intent);
                 return true;
+            //"About"
+            case R.id.about:
+                //Creates a popup
+                AlertDialog.Builder about = new AlertDialog.Builder(this);
+                about.setTitle(R.string.aboutTitle);
+                about.setMessage(R.string.aboutMessage);
+                about.setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {}
+                        });
+
+                about.show();
             //If the call fails
             default:
                 return super.onOptionsItemSelected(item);
