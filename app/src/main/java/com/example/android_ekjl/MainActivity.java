@@ -34,11 +34,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends ListActivity {
-	static private int cal_size = 20; //How many events to display by default
+	private int cal_size = 20; //How many events to display by default
     private int current_size = 0;
     public String[] downloads;
     public String[] names;
     public String[] dates;
+    public String[] isImportant;
 
 	static String subfolder = "/EKJL_PDFs/";
     static String calendarURL = "http://ekjl.ee/kalender/nimekiri/lk/";
@@ -61,7 +62,7 @@ public class MainActivity extends ListActivity {
         //Gets the key for how many events to display
         SharedPreferences calendarPref = getSharedPreferences("Calendar", 0);
         cal_size = calendarPref.getInt("cal_size", 20);
-
+        
         if(cal_size != current_size) {
             current_size = cal_size;
             createList();
@@ -101,14 +102,16 @@ public class MainActivity extends ListActivity {
             downloads = new String[cal_size];
             names = new String[cal_size];
             dates = new String[cal_size];
+            isImportant = new String[cal_size];
             for(int x = 0; x < cal_size; x++) {
                 names[x] = comps.get(x)[0];
                 dates[x] = comps.get(x)[1];
                 downloads[x] = comps.get(x)[2];
+                isImportant[x] = comps.get(x)[3];
             }
 
             //Calls the adapter for creating the list
-            CalendarAdapter adapter = new CalendarAdapter(this, names, dates, downloads);
+            CalendarAdapter adapter = new CalendarAdapter(this, names, dates, downloads, isImportant);
             setListAdapter(adapter);
         } catch(MalformedURLException e) {
             e.printStackTrace();
@@ -127,9 +130,14 @@ public class MainActivity extends ListActivity {
         Map<Integer, String[]> comps = new HashMap<Integer, String[]>();
         int counter = 0;
         boolean next = false;
+        String isImportant = "0";
+
+        //Strings to look for in the HTML
+        String important = "events-list-yearly important";
         String s = "caption06";
         String dl1 = "class=\"icon-schedule\"";
         String dl2 = "class=\"icon-manual\"";
+
         String name = null;
         String download = null; //Is null if the competition has no PDF for download
 
@@ -139,6 +147,10 @@ public class MainActivity extends ListActivity {
 
         String inputLine;
         while ((inputLine = in.readLine()) != null){
+            //If it's an important event
+            if(inputLine.contains(important)) {
+                isImportant = "1";
+            }
         	//Name
         	if(inputLine.contains(s)) {
         		name = splitter(inputLine, ">");
@@ -147,9 +159,10 @@ public class MainActivity extends ListActivity {
         	//Date
         	else if(next) {
         		String date = splitter(inputLine, ">");
-        		String[] current = {name, date, download};
+        		String[] current = {name, date, download, isImportant};
         		comps.put(counter, current);
-        		
+
+                isImportant = "0";
         		counter++;
         		download = null;
         		next = false;
